@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeFragment"
+    android:background="@drawable/loginbackground"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Category"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="@color/lavender"
+        android:background="@drawable/lavender_border"
+        android:backgroundTint="@color/white"
+        android:layout_marginTop="10dp"
+        android:drawableEnd="@drawable/add_category_dialog"
+        android:paddingStart="80dp"
+        android:paddingEnd="70dp"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recycActivityMain"/>
+
+</LinearLayout>

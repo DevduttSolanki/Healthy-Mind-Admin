@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "542398785221",
+    "firebase_url": "https://healthy-mind-3deff-default-rtdb.firebaseio.com",
+    "project_id": "healthy-mind-3deff",
+    "storage_bucket": "healthy-mind-3deff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542398785221:android:c07c507a5696a7f85f72ac",
+        "android_client_info": {
+          "package_name": "com.example.healthymind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXADuvpPrbosDWt_LSnbIBtEqcqqpLMUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542398785221:android:0922fb86bee883c15f72ac",
+        "android_client_info": {
+          "package_name": "com.example.healthymindadmin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXADuvpPrbosDWt_LSnbIBtEqcqqpLMUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

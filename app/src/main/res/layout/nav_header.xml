@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:gravity="bottom"
+    android:padding="16dp"
+    android:background="@drawable/menuheaderbkg"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/nav_profile_user_img"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/profile_img_border"
+        android:src="@drawable/man_profil_icon"
+        android:layout_marginBottom="15dp"/>
+
+
+    <TextView
+        android:id="@+id/profile_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Healthy Mind"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:paddingBottom="20dp"/>
+
+</LinearLayout>

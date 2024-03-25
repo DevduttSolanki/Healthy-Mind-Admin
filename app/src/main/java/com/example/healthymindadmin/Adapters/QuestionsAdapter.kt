@@ -1,11 +1,14 @@
-package com.example.healthymindadmin
+package com.example.healthymindadmin.Adapters
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.healthymindadmin.Models.QuestionModel
+import com.example.healthymindadmin.R
 import com.example.healthymindadmin.databinding.ItenQuestionBinding
+
 
 
 class QuestionsAdapter(var context: Context, list: ArrayList<QuestionModel>) :
@@ -23,8 +26,9 @@ class QuestionsAdapter(var context: Context, list: ArrayList<QuestionModel>) :
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
         val model: QuestionModel = list[position]
-        holder.binding.question.setText(model.question)
+        holder.binding.question.text = model.question
     }
+
 
     override fun getItemCount(): Int {
         return list.size

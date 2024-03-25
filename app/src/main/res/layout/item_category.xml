@@ -2,21 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/dialog_add_category_bg">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
         android:background="@color/white"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -41,17 +39,18 @@
                 android:id="@+id/textViewCategoryNames"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
+                android:background="@drawable/lavender_border"
                 android:text="Healthy Mind"
                 android:textColor="@color/lavender"
-                android:textStyle="bold"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/categoryImgs"
                 app:layout_constraintStart_toStartOf="@+id/categoryImgs"
-                app:layout_constraintTop_toBottomOf="@+id/categoryImgs"
-                android:background="@drawable/lavender_border"/>
+                app:layout_constraintTop_toBottomOf="@+id/categoryImgs" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

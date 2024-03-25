@@ -1,23 +1,40 @@
 package com.example.healthymindadmin
 
+import android.app.Activity
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.example.healthymindadmin.Adapters.CategoryAdapter
+import com.example.healthymindadmin.Models.CategoryModel
 import com.example.healthymindadmin.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+import de.hdodenhof.circleimageview.CircleImageView
+import java.util.Date
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -29,12 +46,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var drawer_layout: DrawerLayout
     private lateinit var bottom_nav: BottomNavigationView
 
+    private lateinit var database: FirebaseDatabase
+    private lateinit var storage: FirebaseStorage
+    private lateinit var addCategoryImg: CircleImageView
+    private lateinit var txtEnterCategoryName: EditText
+    private lateinit var btnUploadCategory: Button
+    private lateinit var viewFetchImg: View
+    private lateinit var imageUri: Uri
+    private lateinit var dialog: Dialog
+    private lateinit var progressDialog: ProgressDialog
+    private var list: ArrayList<CategoryModel> = ArrayList()
+    private lateinit var adapter: CategoryAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         auth= FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance()
+        storage = FirebaseStorage.getInstance()
+        adapter = CategoryAdapter(this, list)
+
+
+        list = ArrayList()
+
+        progressDialog = ProgressDialog(this)
+        progressDialog.setTitle("Uploading")
+        progressDialog.setMessage("Please wait.")
 
         //drawer menu
         drawer_layout = binding.drawerLayout
@@ -49,6 +88,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         bottom_nav = binding.bottomMenu
 
+
+
         if(savedInstanceState==null)
         {
             replaceFragment(HomeFragment())
@@ -59,6 +100,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         bottomNavItemSelect()
         backPress()
+        showdilogandfunction()
     }
 
     private fun replaceFragment(fa: Fragment) {
@@ -111,7 +153,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_add_category-> {
-                showDialogAddCategory()
+                dialog.show()
             }
 
 
@@ -161,7 +203,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
                 R.id.bottom_nav_addCategory ->{
-                    showDialogAddCategory()
+
+                    dialog.show()
                 }
             }
             true
@@ -191,6 +234,118 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         menuInflater.inflate(R.menu.nav_toolbar,menu)
         return true
     }
+
+    private fun showdilogandfunction(){
+
+        dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_add_category)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(true)
+
+        btnUploadCategory = dialog.findViewById(R.id.btnUploadCategory)
+        txtEnterCategoryName = dialog.findViewById(R.id.txtEnterCategoryName)
+        addCategoryImg = dialog.findViewById(R.id.addCategoryImg)
+        viewFetchImg = dialog.findViewById(R.id.viewFetchImg)
+
+        viewFetchImg.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                type = "image/*"
+            }
+            startActivityForResult(intent, 1)
+        }
+
+        database.reference.child("categories").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    list.clear()
+                    for (dataSnapshot in snapshot.children) {
+                        val categoryName =
+                            dataSnapshot.child("categoryname").getValue(String::class.java)
+                        val categoryImg =
+                            dataSnapshot.child("categoryimg").getValue(String::class.java)
+                        val categoryKey = dataSnapshot.key
+
+                        categoryName?.let {
+                            categoryImg?.let { it1 ->
+                                categoryKey?.let { it2 ->
+                                    list.add(
+                                        CategoryModel(it, it1, it2)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    adapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Category does not exist.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@MainActivity, error.message, Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        btnUploadCategory.setOnClickListener {
+
+            val name = txtEnterCategoryName.text.toString()
+
+            if (!::imageUri.isInitialized) {
+                Toast.makeText(
+                    this,
+                    "Please upload category Image.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (name.isEmpty()) {
+                txtEnterCategoryName.error = "Enter category name"
+            } else {
+                progressDialog.show()
+                uploadData()
+            }
+        }
+
+    }
+
+    private fun uploadData() {
+        val reference = storage.reference.child("category")
+            .child(Date().time.toString())
+
+        reference.putFile(imageUri).addOnSuccessListener { taskSnapshot ->
+            reference.downloadUrl.addOnSuccessListener { uri ->
+                val categoryModel = CategoryModel(
+                    txtEnterCategoryName.text.toString(),
+                    uri.toString()
+                )
+
+                database.reference.child("categories").push()
+                    .setValue(categoryModel)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Data Uploaded.", Toast.LENGTH_SHORT)
+                            .show()
+                        addCategoryImg.setImageResource(R.drawable.gallery)
+                        txtEnterCategoryName.setText("")
+                        progressDialog.dismiss()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+                        progressDialog.dismiss()
+                    }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
+
+
+            imageUri = data.data!!
+            addCategoryImg.setImageURI(imageUri)
+        }
+    }
 }
-
-

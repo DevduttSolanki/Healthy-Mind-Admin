@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".QuestionsFragment">
+    tools:context=".QuestionsFragment"
+    android:orientation="vertical"
+    android:background="@drawable/question_frag_bg"
+    android:layout_marginBottom="70dp">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <TextView
+        android:id="@+id/tv_add_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Question"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="@color/lavender"
+        android:background="@drawable/questions_border"
+        android:backgroundTint="@color/white"
+        android:layout_marginTop="10dp"
+        android:drawableEnd="@drawable/add_category_dialog"
+        android:paddingStart="80dp"
+        android:paddingEnd="70dp"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/recyQuestions"/>
 
-</FrameLayout>
+
+
+</LinearLayout>

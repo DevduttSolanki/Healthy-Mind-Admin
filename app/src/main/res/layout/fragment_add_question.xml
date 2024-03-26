@@ -20,7 +20,7 @@
         android:hint="Enter your question"
         android:textColorHint="@color/lavender"
         android:inputType="text"
-        android:textColor="@color/black"
+        android:textColor="@color/lavender"
         android:textStyle="bold"
         android:backgroundTint="@color/white"
         android:background="@drawable/questions_border"/>
@@ -42,7 +42,7 @@
         android:hint="Enter Option A"
         android:textColorHint="@color/lavender"
         android:inputType="text"
-        android:textColor="@color/black"
+        android:textColor="@color/lavender"
         android:textStyle="bold"
         android:backgroundTint="@color/white"
         android:background="@drawable/lavender_border"/>
@@ -58,7 +58,7 @@
         android:hint="Enter Option B"
         android:textColorHint="@color/lavender"
         android:inputType="text"
-        android:textColor="@color/black"
+        android:textColor="@color/lavender"
         android:textStyle="bold"
         android:backgroundTint="@color/white"
         android:background="@drawable/lavender_border"/>
@@ -74,7 +74,7 @@
         android:hint="Enter Option C"
         android:textColorHint="@color/lavender"
         android:inputType="text"
-        android:textColor="@color/black"
+        android:textColor="@color/lavender"
         android:textStyle="bold"
         android:backgroundTint="@color/white"
         android:background="@drawable/lavender_border"/>
@@ -90,7 +90,7 @@
         android:hint="Enter Option D"
         android:textColorHint="@color/lavender"
         android:inputType="text"
-        android:textColor="@color/black"
+        android:textColor="@color/lavender"
         android:textStyle="bold"
         android:backgroundTint="@color/white"
         android:background="@drawable/lavender_border"/>

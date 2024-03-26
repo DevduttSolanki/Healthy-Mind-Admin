@@ -5,8 +5,7 @@ class QuestionModel(
     var optionA: String = "",
     var optionB: String = "",
     var optionC: String = "",
-    var optionD: String = "",
-    var key: String = "",
+    var optionD: String = ""
 ) {
-    constructor() : this("", "", "", "", "", "")
+    constructor() : this("", "", "", "", "")
 }

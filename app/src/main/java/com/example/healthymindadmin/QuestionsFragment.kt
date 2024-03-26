@@ -1,7 +1,6 @@
 package com.example.healthymindadmin
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,29 +46,30 @@ class QuestionsFragment : Fragment() {
         adapter = QuestionsAdapter(requireContext(), list)
         binding.recyQuestions.adapter = adapter
 
-        database.reference.child("categories").child(categoryName).child("questions")
+        database.reference.child("category-questions").child(categoryName).child("questions")
             .addValueEventListener(object : ValueEventListener {
+
                 override fun onDataChange(snapshot: DataSnapshot) {
                     list.clear()
 
                     if (snapshot.exists()) {
                         for (dataSnapshot in snapshot.children) {
                             val model = dataSnapshot.getValue(QuestionModel::class.java)
-                            model?.key = dataSnapshot.key!!
+                            //model?.key = dataSnapshot.key!!
                             model?.let { list.add(it) }
                         }
                         adapter.notifyDataSetChanged()
-                        Log.d("QuestionsFragment", "Questions loaded successfully. Count: ${list.size}")
+
                     } else {
                         Toast.makeText(requireContext(), "No questions found for this category.", Toast.LENGTH_SHORT).show()
-                        Log.d("QuestionsFragment", "No questions found for this category.")
+
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     // Handle onCancelled
-                    Toast.makeText(requireContext(), "Database operation cancelled: ${error.message}", Toast.LENGTH_SHORT).show()
-                    Log.e("QuestionsFragment", "Database operation cancelled: ${error.message}")
+                    Toast.makeText(requireContext(), "Something went wrong, please try again later: ${error.message}", Toast.LENGTH_SHORT).show()
+
                 }
             })
 

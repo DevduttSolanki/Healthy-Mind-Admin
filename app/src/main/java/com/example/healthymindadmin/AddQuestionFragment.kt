@@ -9,10 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.healthymindadmin.Models.QuestionModel
 import com.example.healthymindadmin.databinding.FragmentAddQuestionBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 
 class AddQuestionFragment : Fragment() {
 
@@ -50,28 +47,55 @@ class AddQuestionFragment : Fragment() {
                 optionA = optionA,
                 optionB = optionB,
                 optionC = optionC,
-                optionD = optionD,
-                key = ""
+                optionD = optionD
             )
 
-            val questionsRef = database!!.getReference("categories").child(categoryName!!).child("questions")
-            questionsRef.push().setValue(model)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(requireContext(), "Question added successfully", Toast.LENGTH_SHORT).show()
-                        // Clear EditText fields
-                        binding.txtInputQuestion.text?.clear()
-                        for (i in 0 until binding.ansContainer.childCount) {
-                            (binding.ansContainer.getChildAt(i) as EditText).text?.clear()
-                        }
-                    } else {
-                        Toast.makeText(requireContext(), "Failed to add question", Toast.LENGTH_SHORT).show()
-                    }
+            if(optionA.isEmpty() || optionB.isEmpty() || optionC.isEmpty() || optionD.isEmpty()){
+
+                Toast.makeText(requireContext(), "Please enter all options.", Toast.LENGTH_SHORT).show()
+                if (optionA.isEmpty()){
+                    binding.editTextText7.error = "Please add option A"
                 }
+                if (optionB.isEmpty()){
+                    binding.editTextText8.error = "Please add option B"
+                }
+                if (optionC.isEmpty()){
+                    binding.editTextText9.error = "Please add option C"
+                }
+                if (optionD.isEmpty()){
+                    binding.editTextText11.error = "Please add option D"
+                }
+
+            }else {
+
+                val questionsRef = database!!.getReference("category-questions").child(categoryName!!).child("questions")
+                questionsRef.push().setValue(model)
+
+                    .addOnCompleteListener { task ->
+
+                        if (task.isSuccessful) {
+
+                            Toast.makeText(requireContext(), "Question added successfully", Toast.LENGTH_SHORT).show()
+                            // Clear EditText fields
+                            binding.txtInputQuestion.text?.clear()
+                            for (i in 0 until binding.ansContainer.childCount) {
+                                (binding.ansContainer.getChildAt(i) as EditText).text?.clear()
+                            }
+                        } else {
+                            Toast.makeText(requireContext(), "Failed to add question", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+
+            }
+
+
+
+
         }
 
         // Update question keys with category keys
-        val categoriesRef = database!!.getReference("categories")
+     /*   val categoriesRef = database!!.getReference("categories")
         categoriesRef.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -106,7 +130,7 @@ class AddQuestionFragment : Fragment() {
                 // Handle onCancelled
                 Toast.makeText(requireContext(), "Database operation cancelled: ${error.message}", Toast.LENGTH_SHORT).show()
             }
-        })
+        }) */
 
         return view
     }

@@ -34,14 +34,18 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var database: FirebaseDatabase
     private lateinit var storage: FirebaseStorage
+
     private lateinit var addCategoryImg: CircleImageView
     private lateinit var txtEnterCategoryName: EditText
     private lateinit var btnUploadCategory: Button
+
     private lateinit var viewFetchImg: View
     private lateinit var imageUri: Uri
+
     private lateinit var dialog: Dialog
     private lateinit var progressDialog: ProgressDialog
     private lateinit var progressDialogLoad: ProgressDialog
+
     private var list: ArrayList<CategoryModel> = ArrayList()
     private lateinit var adapter: CategoryAdapter
 

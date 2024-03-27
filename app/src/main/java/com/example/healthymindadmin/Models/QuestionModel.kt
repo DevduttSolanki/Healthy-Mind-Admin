@@ -1,11 +1,8 @@
-package com.example.healthymindadmin.Models
-
 class QuestionModel(
-    var question: String = "",
-    var optionA: String = "",
-    var optionB: String = "",
-    var optionC: String = "",
-    var optionD: String = ""
-) {
-    constructor() : this("", "", "", "", "")
-}
+    var question: String? = null,
+    var optionA: String? = null,
+    var optionB: String? = null,
+    var optionC: String? = null,
+    var optionD: String? = null,
+    var key: String? = null
+)

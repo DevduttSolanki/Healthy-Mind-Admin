@@ -1,5 +1,6 @@
 package com.example.healthymindadmin
 
+import QuestionModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.healthymindadmin.Models.QuestionModel
 import com.example.healthymindadmin.databinding.FragmentAddQuestionBinding
 import com.google.firebase.database.FirebaseDatabase
 
@@ -47,7 +47,8 @@ class AddQuestionFragment : Fragment() {
                 optionA = optionA,
                 optionB = optionB,
                 optionC = optionC,
-                optionD = optionD
+                optionD = optionD,
+                null
             )
 
             if(optionA.isEmpty() || optionB.isEmpty() || optionC.isEmpty() || optionD.isEmpty()){
@@ -95,42 +96,42 @@ class AddQuestionFragment : Fragment() {
         }
 
         // Update question keys with category keys
-     /*   val categoriesRef = database!!.getReference("categories")
-        categoriesRef.addValueEventListener(object : ValueEventListener {
+        /*   val categoriesRef = database!!.getReference("categories")
+           categoriesRef.addValueEventListener(object : ValueEventListener {
 
-            override fun onDataChange(snapshot: DataSnapshot) {
+               override fun onDataChange(snapshot: DataSnapshot) {
 
-                for (categorySnapshot in snapshot.children) {
+                   for (categorySnapshot in snapshot.children) {
 
-                    val categoryKey = categorySnapshot.key
-                    categoryKey?.let {
+                       val categoryKey = categorySnapshot.key
+                       categoryKey?.let {
 
-                        val questionsRef = categoriesRef.child(categoryKey).child("questions")
-                        questionsRef.addValueEventListener(object : ValueEventListener {
+                           val questionsRef = categoriesRef.child(categoryKey).child("questions")
+                           questionsRef.addValueEventListener(object : ValueEventListener {
 
-                            override fun onDataChange(questionSnapshot: DataSnapshot) {
+                               override fun onDataChange(questionSnapshot: DataSnapshot) {
 
-                                for (questionSnapshot in questionSnapshot.children) {
-                                    val questionKey = questionSnapshot.key
-                                    // Update the key field of the question with the category key
-                                    questionsRef.child(questionKey!!).child("key").setValue(categoryKey)
-                                }
-                            }
+                                   for (questionSnapshot in questionSnapshot.children) {
+                                       val questionKey = questionSnapshot.key
+                                       // Update the key field of the question with the category key
+                                       questionsRef.child(questionKey!!).child("key").setValue(categoryKey)
+                                   }
+                               }
 
-                            override fun onCancelled(error: DatabaseError) {
-                                // Handle onCancelled
-                                Toast.makeText(requireContext(), "Database operation cancelled: ${error.message}", Toast.LENGTH_SHORT).show()
-                            }
-                        })
-                    }
-                }
-            }
+                               override fun onCancelled(error: DatabaseError) {
+                                   // Handle onCancelled
+                                   Toast.makeText(requireContext(), "Database operation cancelled: ${error.message}", Toast.LENGTH_SHORT).show()
+                               }
+                           })
+                       }
+                   }
+               }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Handle onCancelled
-                Toast.makeText(requireContext(), "Database operation cancelled: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
-        }) */
+               override fun onCancelled(error: DatabaseError) {
+                   // Handle onCancelled
+                   Toast.makeText(requireContext(), "Database operation cancelled: ${error.message}", Toast.LENGTH_SHORT).show()
+               }
+           }) */
 
         return view
     }

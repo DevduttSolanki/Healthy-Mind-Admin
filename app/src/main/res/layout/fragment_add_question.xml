@@ -6,7 +6,8 @@
     tools:context=".AddQuestionFragment"
     android:orientation="vertical"
     android:background="@drawable/add_question_bg"
-    android:gravity="center">
+    android:gravity="center"
+    android:layout_marginBottom="55dp">
 
 
     <EditText

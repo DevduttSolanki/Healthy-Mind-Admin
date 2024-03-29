@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AppointmentRequestsFragment"
-    android:background="@drawable/question_frag_bg"
+    android:background="@drawable/dialog_add_category_bg"
     android:layout_marginBottom="70dp">
 
 

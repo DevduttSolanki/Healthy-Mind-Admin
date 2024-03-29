@@ -140,8 +140,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_appointments -> {
-                replaceFragment(AppointmentsFragment())
-                binding.toolbar.title="APPOINTMENTS"
+                replaceFragment(AppointmentRequestsFragment())
+                binding.toolbar.title="APPOINTMENT REQUESTS"
             }
             R.id.nav_settings -> {
                 replaceFragment(SettingsFragment())
@@ -198,8 +198,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 R.id.bottom_nav_Appointment ->{
 
-                    replaceFragment(AppointmentsFragment())
-                    binding.toolbar.title="APPOINTMENTS"
+                    replaceFragment(AppointmentRequestsFragment())
+                    binding.toolbar.title="APPOINTMENT REQUESTS"
                 }
 
                 R.id.bottom_nav_addCategory ->{

@@ -22,9 +22,19 @@
             android:title="App Users"/>
 
         <item
+            android:id="@+id/nav_users_test_results"
+            android:icon="@drawable/user_test_results"
+            android:title="Users Test Results"/>
+
+        <item
             android:id="@+id/nav_appointments"
             android:icon="@drawable/appointment"
-            android:title="Appointments"/>
+            android:title="Appointment Requests"/>
+
+        <item
+            android:id="@+id/nav_manage_appointments"
+            android:icon="@drawable/work_schedule_icon"
+            android:title="Manage Appointment Schedule"/>
 
         <item
             android:id="@+id/nav_add_category"

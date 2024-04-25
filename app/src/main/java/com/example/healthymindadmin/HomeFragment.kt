@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -44,10 +45,10 @@ class HomeFragment : Fragment() {
 
     private lateinit var dialog: Dialog
     private lateinit var progressDialog: ProgressDialog
-    private lateinit var progressDialogLoad: ProgressDialog
 
     private var list: ArrayList<CategoryModel> = ArrayList()
     private lateinit var adapter: CategoryAdapter
+    private lateinit var progressbar : ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,10 +56,6 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
-
-        progressDialogLoad = ProgressDialog(requireActivity())
-        progressDialogLoad.setTitle("Loading")
-        progressDialogLoad.setMessage("Please wait.")
 
         database = FirebaseDatabase.getInstance()
         storage = FirebaseStorage.getInstance()
@@ -74,6 +71,7 @@ class HomeFragment : Fragment() {
         progressDialog.setTitle("Uploading")
         progressDialog.setMessage("Please wait.")
 
+        progressbar = binding.progressbar
         btnUploadCategory = dialog.findViewById(R.id.btnUploadCategory)
         txtEnterCategoryName = dialog.findViewById(R.id.txtEnterCategoryName)
         addCategoryImg = dialog.findViewById(R.id.addCategoryImg)
@@ -84,6 +82,8 @@ class HomeFragment : Fragment() {
 
         adapter = CategoryAdapter(requireActivity(), list)
         binding.recycActivityMain.adapter = adapter
+
+        progressbar.visibility = View.VISIBLE // Show progress bar when loading starts
 
         database.reference.child("categories").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -107,6 +107,7 @@ class HomeFragment : Fragment() {
                         }
                     }
                     adapter.notifyDataSetChanged()
+                    progressbar.visibility = View.GONE
                 } else {
                     Toast.makeText(
                         requireActivity(),
@@ -118,6 +119,7 @@ class HomeFragment : Fragment() {
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(requireActivity(), error.message, Toast.LENGTH_SHORT).show()
+                progressbar.visibility = View.GONE
             }
         })
 
@@ -152,32 +154,60 @@ class HomeFragment : Fragment() {
     }
 
     private fun uploadData() {
-        val reference = storage.reference.child("category")
-            .child(Date().time.toString())
+        val categoryName = txtEnterCategoryName.text.toString()
 
-        reference.putFile(imageUri).addOnSuccessListener { taskSnapshot ->
-            reference.downloadUrl.addOnSuccessListener { uri ->
-                val categoryModel = CategoryModel(
-                    txtEnterCategoryName.text.toString(),
-                    uri.toString()
-                )
-
-                database.reference.child("categories").push()
-                    .setValue(categoryModel)
-                    .addOnSuccessListener {
-                        Toast.makeText(requireActivity(), "Data Uploaded.", Toast.LENGTH_SHORT)
-                            .show()
-                        addCategoryImg.setImageResource(R.drawable.gallery)
-                        txtEnterCategoryName.setText("")
-                        progressDialog.dismiss()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(requireActivity(), e.message, Toast.LENGTH_SHORT).show()
-                        progressDialog.dismiss()
-                    }
-            }
+        // Check if category name is empty
+        if (categoryName.isEmpty()) {
+            txtEnterCategoryName.error = "Enter category name"
+            return
         }
+
+        // Check if category name already exists
+        database.reference.child("categories")
+            .orderByChild("categoryname")
+            .equalTo(categoryName)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        // Category name already exists
+                        Toast.makeText(requireActivity(), "Category name must be unique.", Toast.LENGTH_SHORT).show()
+                        progressDialog.dismiss()
+                    } else {
+                        // Category name is unique, proceed with upload
+                        val reference = storage.reference.child("category")
+                            .child(Date().time.toString())
+
+                        reference.putFile(imageUri).addOnSuccessListener { taskSnapshot ->
+                            reference.downloadUrl.addOnSuccessListener { uri ->
+                                val categoryModel = CategoryModel(
+                                    categoryName,
+                                    uri.toString()
+                                )
+
+                                database.reference.child("categories").push()
+                                    .setValue(categoryModel)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(requireActivity(), "Data Uploaded.", Toast.LENGTH_SHORT)
+                                            .show()
+                                        addCategoryImg.setImageResource(R.drawable.gallery)
+                                        txtEnterCategoryName.setText("")
+                                        progressDialog.dismiss()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(requireActivity(), e.message, Toast.LENGTH_SHORT).show()
+                                        progressDialog.dismiss()
+                                    }
+                            }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(requireActivity(), error.message, Toast.LENGTH_SHORT).show()
+                }
+            })
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

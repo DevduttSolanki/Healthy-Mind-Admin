@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,11 +20,11 @@ import com.google.firebase.database.ValueEventListener
 
 class AppointmentRequestsFragment : Fragment() {
 
-
     private lateinit var appointmentsRecyclerView: RecyclerView
     private lateinit var appointmentsAdapter: AppointmentRequestAdapter
     private lateinit var appointmentsList: MutableList<AppointmentModel>
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var progressbar : ProgressBar
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,24 +36,33 @@ class AppointmentRequestsFragment : Fragment() {
         appointmentsAdapter = AppointmentRequestAdapter(appointmentsList)
         appointmentsRecyclerView.adapter = appointmentsAdapter
         appointmentsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        progressbar = view.findViewById(R.id.progressbar)
+
+        progressbar.visibility = View.VISIBLE
 
         databaseReference = FirebaseDatabase.getInstance().getReference("AppointmentRequests")
+
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 appointmentsList.clear()
                 for (appointmentSnapshot in snapshot.children) {
                     val appointment = appointmentSnapshot.getValue(AppointmentModel::class.java)
                     appointment?.let {
+                        it.appointmentId = appointmentSnapshot.key.toString() // Assuming appointmentId is set here
                         appointmentsList.add(it)
                     }
                 }
                 appointmentsAdapter.notifyDataSetChanged()
+                progressbar.visibility = View.GONE
             }
 
             override fun onCancelled(error: DatabaseError) {
                 // Handle error
+                Toast.makeText(requireContext(),"Something went wrong,please try again later",Toast.LENGTH_LONG).show()
+                progressbar.visibility = View.GONE
             }
         })
 
-        return view}
+        return view
+    }
 }

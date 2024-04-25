@@ -4,12 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.healthymindadmin.Models.CategoryModel
 import com.example.healthymindadmin.QuestionsFragment
 import com.example.healthymindadmin.R
 import com.example.healthymindadmin.databinding.ItemCategoryBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 
 class CategoryAdapter(private val context: Context, private val list: ArrayList<CategoryModel>) :
@@ -46,6 +52,13 @@ class CategoryAdapter(private val context: Context, private val list: ArrayList<
             fragmentTransaction.commit()
         }
 
+
+        holder.itemView.setOnLongClickListener {
+            showDeleteConfirmationDialog(model)
+            true // Consume the long click event
+        }
+
+
     }
 
     override fun getItemCount(): Int {
@@ -55,5 +68,48 @@ class CategoryAdapter(private val context: Context, private val list: ArrayList<
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var binding: ItemCategoryBinding = ItemCategoryBinding.bind(itemView)
+    }
+
+    private fun showDeleteConfirmationDialog(model: CategoryModel) {
+        AlertDialog.Builder(context)
+            .setTitle("Delete Category")
+            .setMessage("Are you sure you want to delete this category?")
+            .setPositiveButton("Yes") { _, _ ->
+                deleteCategory(model.categoryname!!)
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun deleteCategory(categoryName: String) {
+        val position = list.indexOfFirst { it.categoryname == categoryName }
+        if (position != -1) {
+            list.removeAt(position)
+            notifyItemRemoved(position)
+
+            // Delete from Firebase
+            val query = FirebaseDatabase.getInstance().getReference("categories")
+                .orderByChild("categoryname").equalTo(categoryName)
+
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (dataSnapshot in snapshot.children) {
+                            dataSnapshot.ref.removeValue()
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Category deleted successfully", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(context, "Failed to delete category", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
     }
 }

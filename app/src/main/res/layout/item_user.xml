@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -9,78 +8,78 @@
         android:id="@+id/cardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/lavender_border"
         app:cardCornerRadius="20dp"
-        android:layout_margin="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/lavender_border_20radius">
-
+            android:layout_height="match_parent"
+            android:background="@drawable/lavender_border_20radius"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
 
                 <TextView
-                    android:id="@+id/doctor_name_text"
+                    android:id="@+id/tv_uid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:text="Doctor Name:"
+                    android:layout_marginStart="35dp"
+                    android:text="User Id:"
                     android:textColor="@color/lavender"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <TextView
-                    android:id="@+id/doctor_name_text_view"
+                    android:id="@+id/tv_uid1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:text="Doctor name"
+                    android:text="User Id"
                     android:textColor="@color/lavender"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"/>
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
 
                 <TextView
-                    android:id="@+id/appointment_date_text"
+                    android:id="@+id/tv_resultId"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="88dp"
-                    android:text="Date:"
+                    android:layout_marginStart="45dp"
+                    android:text="Name:"
                     android:textColor="@color/lavender"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/appointment_date_text_view"
+                    android:id="@+id/tv_resultId1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:text="Date"
+                    android:text="Name"
                     android:textColor="@color/lavender"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"/>
 
             </LinearLayout>
 
@@ -88,31 +87,30 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
 
                 <TextView
-                    android:id="@+id/appointment_time_text"
+                    android:id="@+id/tv_categoryName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="83dp"
-                    android:text="Time:"
+                    android:layout_marginStart="50dp"
+                    android:text="Email:"
                     android:textColor="@color/lavender"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-
                 <TextView
-                    android:id="@+id/appointment_time_text_view"
+                    android:id="@+id/tv_categoryName1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:text="Time"
+                    android:text="Email"
                     android:textColor="@color/lavender"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"/>
 
 
             </LinearLayout>
@@ -120,56 +118,30 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
 
                 <TextView
-                    android:id="@+id/status_tex"
+                    android:id="@+id/tv_result"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="71dp"
-                    android:text="Status:"
+                    android:text="Password:"
                     android:textColor="@color/lavender"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"/>
 
                 <TextView
-                    android:id="@+id/status_text_view"
+                    android:id="@+id/tv_result1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:text="Pending"
+                    android:text="Password"
                     android:textColor="@color/lavender"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn_approve"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#4CAF50"
-                    android:text="Approve"
-                    android:layout_marginEnd="15dp"/>
-
-                <!-- Reject Button -->
-                <Button
-                    android:id="@+id/btn_reject"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#AF4C4C"
-                    android:text="Reject"
-                    android:layout_marginStart="15dp"/>
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"/>
 
             </LinearLayout>
 

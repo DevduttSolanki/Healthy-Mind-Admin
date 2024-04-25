@@ -1,59 +1,197 @@
 package com.example.healthymindadmin
 
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SettingsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class SettingsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class SettingsFragment : Fragment(), View.OnClickListener {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+
+    private lateinit var firebase_auth: FirebaseAuth
+    private lateinit var firebase_db: FirebaseDatabase
+    private lateinit var storage: FirebaseStorage
+
+    private lateinit var name: EditText
+    private lateinit var email: EditText
+    private lateinit var progressbar: ProgressBar
+    private lateinit var txtChangePass: TextView
+
+    private val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+        val fragmentview = inflater.inflate(R.layout.fragment_settings, container, false)
+
+        name = fragmentview.findViewById(R.id.profile_name)
+        email = fragmentview.findViewById(R.id.profile_email)
+        progressbar = fragmentview.findViewById(R.id.progressbar)
+        txtChangePass = fragmentview.findViewById(R.id.changepassRedirectText)
+
+        val save_changes_txt: TextView = fragmentview.findViewById(R.id.profile_save_changes)
+
+        firebase_auth = FirebaseAuth.getInstance()
+        firebase_db = FirebaseDatabase.getInstance()
+        storage = FirebaseStorage.getInstance()
+
+        save_changes_txt.setOnClickListener(this)
+
+        readData()
+        changePassword()
+
+        return fragmentview
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SettingsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SettingsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.profile_save_changes -> updateData()
+        }
+    }
+
+    private fun readData() {
+        progressbar.visibility = View.VISIBLE
+
+        val currentUser = firebase_auth.currentUser
+
+        if (currentUser != null) {
+            val db_ref = firebase_db.getReference("admins")
+            db_ref.child(currentUser.uid).get().addOnSuccessListener { dataSnapshot ->
+
+                if (dataSnapshot.exists()) {
+                    progressbar.visibility = View.GONE
+                    name.setText(dataSnapshot.child("name").value.toString())
+                    email.setText(dataSnapshot.child("email").value.toString())
+
+                } else {
+                    progressbar.visibility = View.GONE
+                    Toast.makeText(requireContext(), "User does not exist", Toast.LENGTH_SHORT).show()
+                }
+            }.addOnFailureListener {
+                progressbar.visibility = View.GONE
+                Toast.makeText(requireContext(), "Something went wrong,please try again later.", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            // Handle the case where currentUser is null
+            progressbar.visibility = View.GONE
+            Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    private fun changePassword() {
+
+        txtChangePass.setOnClickListener {
+
+            val builder = AlertDialog.Builder(requireActivity())
+            val view = layoutInflater.inflate(R.layout.dialog_changepassword, null)
+            val userPW = view.findViewById<EditText>(R.id.forgot_pw_txt)
+
+
+            builder.setView(view)
+            val dialog = builder.create()
+
+            // Initially set the password field to be hidden
+
+            view.findViewById<Button>(R.id.btnReset).setOnClickListener {
+                if (userPW.text.toString().isEmpty()) {
+                    Toast.makeText(requireContext(), "Please enter your registered email.", Toast.LENGTH_SHORT).show()
+                } else {
+                    compareEmailForgotpassword(userPW)
+                    dialog.dismiss()
                 }
             }
+
+            view.findViewById<Button>(R.id.btnCancel).setOnClickListener {
+                dialog.dismiss()
+            }
+
+            if (dialog.window != null) {
+                dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+            }
+            dialog.show()
+        }
+    }
+
+    private fun updateData() {
+
+        val name_txt = name.text.toString()
+        val email_txt = email.text.toString()
+
+        progressbar.visibility = View.VISIBLE
+
+        if (name_txt.trim().isEmpty() || email_txt.trim()
+                .isEmpty()
+        ) {
+
+            if (name_txt.trim().isEmpty()) {
+                progressbar.visibility = View.GONE
+                name.error = "Enter your Name."
+            }
+
+            if (email_txt.trim().isEmpty()) {
+                progressbar.visibility = View.GONE
+                email.error = "Enter Email."
+            }
+
+        } else if (!email_txt.matches(emailPattern.toRegex())) {
+            progressbar.visibility = View.GONE
+            email.error = "Enter valid Email format."
+
+        } else {
+
+
+            val db_ref =
+                firebase_db.reference.child("admins").child(firebase_auth.currentUser!!.uid)
+
+            val updated_data = mapOf(
+                "name" to name_txt,
+                "email" to email_txt
+            )
+            db_ref.updateChildren(updated_data).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    progressbar.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Data updated", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    progressbar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        "Something went wrong,please try again later.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+        }
+    }
+    private fun compareEmailForgotpassword(email: EditText) {
+
+        val view = layoutInflater.inflate(R.layout.dialog_forgotpassword, null)
+        val userEmail = view.findViewById<EditText>(R.id.forgot_pw_txt)
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(userEmail.text.toString()).matches()) {
+            firebase_auth.sendPasswordResetEmail(email.text.toString())
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(requireContext(), "Check your Email", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+        }
     }
 }

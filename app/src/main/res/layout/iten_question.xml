@@ -6,33 +6,40 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
         android:layout_marginEnd="14dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:background="@drawable/lavender_border"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/lavender_border_20radius"
         app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/lavender_border_20radius">
 
-        <TextView
-            android:id="@+id/question"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="15dp"
-            android:text="1. Keep mind healthy"
-            android:textColor="@color/lavender"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="1. Keep mind healthy"
+                android:textColor="@color/lavender"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_margin="10dp"/>
+
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

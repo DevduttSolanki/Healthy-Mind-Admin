@@ -16,7 +16,6 @@
         android:src="@drawable/man_profil_icon"
         android:layout_marginBottom="3dp"/>
 
-
     <TextView
         android:id="@+id/profile_info"
         android:layout_width="wrap_content"

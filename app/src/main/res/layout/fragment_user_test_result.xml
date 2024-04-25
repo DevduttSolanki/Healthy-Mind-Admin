@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AppUsersFragment"
-    android:background="@drawable/dialog_add_category_bg"
-    android:layout_marginBottom="60dp">
+    tools:context=".UserTestResultFragment"
+    android:background="@drawable/settings_bg"
+    android:layout_marginBottom="55dp">
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -19,9 +19,8 @@
 
     <!-- fragment_my_appointments.xml -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/app_users_recycler_view"
+        android:id="@+id/my_results_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 
 </RelativeLayout>

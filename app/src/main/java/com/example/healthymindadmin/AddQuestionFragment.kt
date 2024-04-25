@@ -86,53 +86,8 @@ class AddQuestionFragment : Fragment() {
                             Toast.makeText(requireContext(), "Failed to add question", Toast.LENGTH_SHORT).show()
                         }
                     }
-
-
             }
-
-
-
-
         }
-
-        // Update question keys with category keys
-        /*   val categoriesRef = database!!.getReference("categories")
-           categoriesRef.addValueEventListener(object : ValueEventListener {
-
-               override fun onDataChange(snapshot: DataSnapshot) {
-
-                   for (categorySnapshot in snapshot.children) {
-
-                       val categoryKey = categorySnapshot.key
-                       categoryKey?.let {
-
-                           val questionsRef = categoriesRef.child(categoryKey).child("questions")
-                           questionsRef.addValueEventListener(object : ValueEventListener {
-
-                               override fun onDataChange(questionSnapshot: DataSnapshot) {
-
-                                   for (questionSnapshot in questionSnapshot.children) {
-                                       val questionKey = questionSnapshot.key
-                                       // Update the key field of the question with the category key
-                                       questionsRef.child(questionKey!!).child("key").setValue(categoryKey)
-                                   }
-                               }
-
-                               override fun onCancelled(error: DatabaseError) {
-                                   // Handle onCancelled
-                                   Toast.makeText(requireContext(), "Database operation cancelled: ${error.message}", Toast.LENGTH_SHORT).show()
-                               }
-                           })
-                       }
-                   }
-               }
-
-               override fun onCancelled(error: DatabaseError) {
-                   // Handle onCancelled
-                   Toast.makeText(requireContext(), "Database operation cancelled: ${error.message}", Toast.LENGTH_SHORT).show()
-               }
-           }) */
-
         return view
     }
 

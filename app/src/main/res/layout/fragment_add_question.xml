@@ -24,7 +24,7 @@
         android:textColor="@color/lavender"
         android:textStyle="bold"
         android:backgroundTint="@color/white"
-        android:background="@drawable/questions_border"/>
+        android:background="@drawable/lavender_border_20radius"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -95,6 +95,7 @@
         android:textStyle="bold"
         android:backgroundTint="@color/white"
         android:background="@drawable/lavender_border"/>
+
 
     </LinearLayout>
 

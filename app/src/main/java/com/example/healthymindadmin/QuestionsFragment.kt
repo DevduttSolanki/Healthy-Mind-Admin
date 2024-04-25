@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,7 @@ class QuestionsFragment : Fragment() {
     private lateinit var list: ArrayList<QuestionModel>
     private lateinit var adapter: QuestionsAdapter
 
+    private lateinit var progressbar : ProgressBar
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,6 +41,7 @@ class QuestionsFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = "QUESTIONS"
 
         database = FirebaseDatabase.getInstance()
+        progressbar = binding.progressbar
         list = ArrayList()
 
         val categoryName = requireArguments().getString("categoryName") ?: ""
@@ -46,8 +49,9 @@ class QuestionsFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         binding.recyQuestions.layoutManager = layoutManager
 
+        progressbar.visibility = View.VISIBLE
 
-        // new added
+
         adapter = QuestionsAdapter(requireContext(), list, categoryName, object : DeleteListener {
 
             override fun onLongClick(position: Int, id: String?) {
@@ -59,16 +63,20 @@ class QuestionsFragment : Fragment() {
 
                     builder.setPositiveButton("Yes") { dialog, which ->
                         if (isAdded) {
-                            database.reference.child("category-questions").child(categoryName).child("questions")
+                            database.reference.child("category-questions").child(categoryName)
+                                .child("questions")
                                 .child(id).removeValue()
                                 .addOnSuccessListener {
                                     if (isAdded) {
-                                        Toast.makeText(requireActivity(), "Question deleted.", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            requireActivity(),
+                                            "Question deleted.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
                         }
                     }
-
 
                     builder.setNegativeButton("No") { dialog, which -> dialog.dismiss() }
                     val alertDialog = builder.create()
@@ -82,12 +90,7 @@ class QuestionsFragment : Fragment() {
             }
         })
 
-
-
-
-
         binding.recyQuestions.adapter = adapter
-
 
         database.reference.child("category-questions").child(categoryName).child("questions")
             .addValueEventListener(object : ValueEventListener {
@@ -98,14 +101,20 @@ class QuestionsFragment : Fragment() {
                         list.clear()
 
                         if (snapshot.exists()) {
-                            Log.d("QuestionsFragment", "onDataChange: Data exists")
+
                             for (dataSnapshot in snapshot.children) {
                                 val model = dataSnapshot.getValue(QuestionModel::class.java)
                                 model?.key = dataSnapshot.key!!
                                 model?.let { list.add(it) }
+                                progressbar.visibility = View.GONE
                             }
                         } else {
-                            Toast.makeText(requireContext(), "No questions found for this category.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "No questions found for this category.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            progressbar.visibility = View.GONE
                         }
 
                         // Notify adapter if item count changed
@@ -119,7 +128,12 @@ class QuestionsFragment : Fragment() {
                 override fun onCancelled(error: DatabaseError) {
                     // Handle onCancelled
                     Log.e("QuestionsFragment", "onCancelled: ${error.message}")
-                    Toast.makeText(requireContext(), "Something went wrong, please try again later: ${error.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Something went wrong,please try again later: ${error.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    progressbar.visibility = View.GONE
 
                 }
             })

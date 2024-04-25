@@ -1,8 +1,8 @@
 package com.example.healthymindadmin
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.util.Patterns
@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.example.healthymindadmin.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -33,6 +34,13 @@ class LoginActivity : AppCompatActivity() {
         binding.skip.setOnClickListener {
             val signupIntent = Intent(this,MainActivity::class.java)
             startActivity(signupIntent)
+        }
+
+        if(isAlreadyLogin())
+        {
+            val intent= Intent(this,MainActivity::class.java)
+            startActivity(intent)
+            this.finish()
         }
 
         logIn()
@@ -118,6 +126,7 @@ class LoginActivity : AppCompatActivity() {
                         if (user != null && user.isEmailVerified) {
 
                             val intent = Intent(this, MainActivity::class.java)
+                            saveLogin(true)
                             startActivity(intent)
                             finish() // Optional: finish the current activity to prevent going back
 
@@ -126,6 +135,7 @@ class LoginActivity : AppCompatActivity() {
                             Toast.makeText(this, "Please verify your email address.", Toast.LENGTH_SHORT).show()
                         }
                     } else {
+                        saveLogin(false)
                         // Authentication failed, show toast for incorrect email or password
                         Toast.makeText(this, "Incorrect Email Address or Password.", Toast.LENGTH_SHORT).show()
                     }
@@ -151,5 +161,18 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
         }
+    }
+
+    private fun saveLogin(isLoggedIn:Boolean){
+        val shared_pref=getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+        with(shared_pref.edit()){
+            putBoolean("isLoggedIn",isLoggedIn)
+            apply()
+        }
+    }
+
+    private fun isAlreadyLogin() : Boolean{
+        val shared_pref=getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+        return shared_pref.getBoolean("isLoggedIn",false)
     }
 }

@@ -3,9 +3,7 @@ package com.example.healthymindadmin
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.text.method.PasswordTransformationMethod
 import android.util.Patterns
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -94,6 +93,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
             val db_ref = firebase_db.getReference("admins")
             db_ref.child(currentUser.uid).get().addOnSuccessListener { dataSnapshot ->
 
+
                 if (dataSnapshot.exists()) {
                     progressbar.visibility = View.GONE
                     name.setText(dataSnapshot.child("name").value.toString())
@@ -103,7 +103,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
                         Glide.with(this).load(dataSnapshot.child("profile_img").value)
                             .placeholder(R.drawable.profile).into(profile_img)
                     }
-                } else {
+                }else {
                     progressbar.visibility = View.GONE
                     Toast.makeText(requireContext(), "Admin does not exist", Toast.LENGTH_SHORT)
                         .show()
@@ -132,16 +132,13 @@ class ProfileFragment : Fragment(), View.OnClickListener {
             builder.setView(view)
             val dialog = builder.create()
 
-            val passwordEditText =
-                view.findViewById<EditText>(R.id.forgot_pw_txt) // Replace R.id.passwordEditText with your EditText ID
-            passwordEditText.transformationMethod = PasswordTransformationMethod.getInstance()
-
-
-            // Initially set the password field to be hidden
-
             view.findViewById<Button>(R.id.btnReset).setOnClickListener {
-                compareEmailChangepassword(userPW)
-                dialog.dismiss()
+                if (userPW.text.toString().isEmpty()) {
+                    Toast.makeText(requireContext(), "Please enter your registered email.", Toast.LENGTH_SHORT).show()
+                } else {
+                    compareEmailChangepassword(userPW)
+                    dialog.dismiss()
+                }
             }
 
             view.findViewById<Button>(R.id.btnCancel).setOnClickListener {
@@ -236,11 +233,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         val view = layoutInflater.inflate(R.layout.dialog_forgotpassword, null)
         val userEmail = view.findViewById<EditText>(R.id.forgot_pw_txt)
 
-        if (email.text.toString().isEmpty()) {
-            return
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(userEmail.text.toString()).matches())
+        if (!Patterns.EMAIL_ADDRESS.matcher(userEmail.text.toString()).matches()) {
             firebase_auth.sendPasswordResetEmail(email.text.toString())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -248,6 +241,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
                             .show()
                     }
                 }
+        }
     }
 
 }

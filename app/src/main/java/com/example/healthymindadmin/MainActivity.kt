@@ -104,8 +104,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun replaceFragment(fa: Fragment) {
-
-
         val transaction: FragmentTransaction =supportFragmentManager.beginTransaction()
         transaction.replace(R.id.container,fa)
         transaction.commit()
@@ -143,6 +141,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 replaceFragment(AppointmentRequestsFragment())
                 binding.toolbar.title="APPOINTMENT REQUESTS"
             }
+
+            R.id.nav_users_test_results -> {
+                replaceFragment(UserTestResultFragment())
+                binding.toolbar.title="USER TEST RESULTS"
+            }
+
+            R.id.nav_manage_appointments -> {
+                replaceFragment(AppointmentsFragment())
+                binding.toolbar.title="MANAGE SCHEDULE"
+            }
+
             R.id.nav_settings -> {
                 replaceFragment(SettingsFragment())
                 binding.toolbar.title="SETTINGS"
@@ -169,17 +178,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun showDialogAddCategory() {
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.dialog_add_category)
-
-        // Initialize your dialog views and handle interactions
-        // For example, you can set onClickListener to buttons in your dialog
-
-        // Show the dialog
-        dialog.show()
-    }
-
     private fun bottomNavItemSelect() {
 
         bottom_nav.setOnItemSelectedListener {
@@ -203,7 +201,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
                 R.id.bottom_nav_addCategory ->{
-
                     dialog.show()
                 }
             }
@@ -213,11 +210,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id=item.itemId
-        if(id==R.id.notification){
-            replaceFragment(NotificationFragment())
-            binding.toolbar.title="NOTIFICATION"
-            return true
-        }
+//        if(id==R.id.notification){
+//            replaceFragment(NotificationFragment())
+//            binding.toolbar.title="NOTIFICATION"
+//            return true
+//        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -311,31 +308,57 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun uploadData() {
-        val reference = storage.reference.child("category")
-            .child(Date().time.toString())
+        val categoryName = txtEnterCategoryName.text.toString()
 
-        reference.putFile(imageUri).addOnSuccessListener { taskSnapshot ->
-            reference.downloadUrl.addOnSuccessListener { uri ->
-                val categoryModel = CategoryModel(
-                    txtEnterCategoryName.text.toString(),
-                    uri.toString()
-                )
-
-                database.reference.child("categories").push()
-                    .setValue(categoryModel)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Data Uploaded.", Toast.LENGTH_SHORT)
-                            .show()
-                        addCategoryImg.setImageResource(R.drawable.gallery)
-                        txtEnterCategoryName.setText("")
-                        progressDialog.dismiss()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
-                        progressDialog.dismiss()
-                    }
-            }
+        // Check if category name is empty
+        if (categoryName.isEmpty()) {
+            txtEnterCategoryName.error = "Enter category name"
+            return
         }
+
+        // Check if category name already exists
+        database.reference.child("categories")
+            .orderByChild("categoryname")
+            .equalTo(categoryName)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        // Category name already exists
+                        Toast.makeText(this@MainActivity, "Category name must be unique.", Toast.LENGTH_SHORT).show()
+                        progressDialog.dismiss()
+                    } else {
+                        // Category name is unique, proceed with upload
+                        val reference = storage.reference.child("category")
+                            .child(Date().time.toString())
+
+                        reference.putFile(imageUri).addOnSuccessListener { taskSnapshot ->
+                            reference.downloadUrl.addOnSuccessListener { uri ->
+                                val categoryModel = CategoryModel(
+                                    categoryName,
+                                    uri.toString()
+                                )
+
+                                database.reference.child("categories").push()
+                                    .setValue(categoryModel)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(this@MainActivity, "Data Uploaded.", Toast.LENGTH_SHORT)
+                                            .show()
+                                        addCategoryImg.setImageResource(R.drawable.gallery)
+                                        txtEnterCategoryName.setText("")
+                                        progressDialog.dismiss()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_SHORT).show()
+                                        progressDialog.dismiss()
+                                    }
+                            }
+                        }
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(this@MainActivity, error.message, Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
